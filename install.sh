@@ -11,7 +11,7 @@ fi
 
 chmod +x latinizator_cli.py
 
-echo "Какаю команду для вызова вы хотите использовать?"
+echo "Какую команду для вызова вы хотите использовать?"
 echo "1) latinizator"
 echo "2) latinizator-cli"
 echo "3) Своё имя"
@@ -33,18 +33,22 @@ case $name_choice in
         ;;
 esac
 
-temp_dir=$(mktemp -d)
-cp latinizator_cli.py "$temp_dir/$command_name"
-cp latinizator.py "$temp_dir/"
+# Создаем директорию для установки
+mkdir -p "$HOME/bin"
 
-if [ "$command_name" != "latinizator_cli.py" ]; then
-    sed -i "s/from latinizator import latinizator/from latinizator import latinizator/" "$temp_dir/$command_name"
+# Копируем файлы напрямую, без временной директории
+cp latinizator_cli.py "$HOME/bin/$command_name"
+cp latinizator.py "$HOME/bin/"
+
+# Делаем скрипт исполняемым
+chmod +x "$HOME/bin/$command_name"
+
+# Добавляем shebang в начало файла, если его нет
+if ! grep -q "^#!/usr/bin/env python3" "$HOME/bin/$command_name"; then
+    sed -i '1i#!/usr/bin/env python3' "$HOME/bin/$command_name"
 fi
 
-mkdir -p "$HOME/bin"
-cp "$temp_dir/$command_name" "$HOME/bin/"
-cp "$temp_dir/latinizator.py" "$HOME/bin/"
-
+# Добавляем ~/bin в PATH, если его там нет
 if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
     echo 'export PATH="$HOME/bin:$PATH"' >> "$HOME/.bashrc"
     echo "Добавлен $HOME/bin в PATH в .bashrc"
@@ -61,9 +65,7 @@ echo "Команда '$command_name' была установлена в $HOME/bi
 echo "Чтобы начать использовать команду, выполните: source ~/.bashrc"
 echo "или просто перезапустите терминал."
 
-rm -rf "$temp_dir"
-
 echo
 echo "Теперь вы можете использовать '$command_name'."
 echo "Например: $command_name 'Привет мир' -u"
-echo "Не забудьте перезапустить терминал!"
+echo "Не забудьте перезапустить терминал или выполнить: source ~/.bashrc"
