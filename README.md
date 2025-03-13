@@ -7,7 +7,7 @@ CLI-версия [Latinizator](https://github.com/venterum/Latinizator).
 ## Установка
 
 ```bash
-git clone https://github.com/yourusername/latinizator-cli.git
+git clone https://github.com/venterum/latinizator-cli.git
 cd latinizator-cli
 ```
 
